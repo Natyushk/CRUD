@@ -21,4 +21,7 @@ export class BooksService {
   async update(id: string, bookDto: any): Promise<Book> {
     return this.bookModel.findByIdAndUpdate(id, bookDto, { new: true }).exec();
   }
+  async delete(id: string): Promise<Book> {
+    return this.bookModel.findOneAndDelete(new ObjectId(id)).exec();
+  }
 }
