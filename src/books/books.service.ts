@@ -11,4 +11,7 @@ export class BooksService {
     const createdBook = new this.bookModel(bookDto);
     return createdBook.save();
   }
+  async findAll(): Promise<Book[]> {
+    return this.bookModel.find().exec();
+  }
 }
