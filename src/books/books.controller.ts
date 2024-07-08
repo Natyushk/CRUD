@@ -1,25 +1,37 @@
-import { Controller, Post, Get, Body, Param, Put, Delete,BadRequestException, NotFoundException} from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  Put,
+  Delete,
+  BadRequestException,
+} from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from './book.schema';
+import { CreateBookRequest, UpdateBookRequest } from './books.type';
+import { isValidDate } from 'src/utils/date';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Post()
-  async create(@Body() createBookDto: any) {
+  async create(@Body() createBookDto: CreateBookRequest) {
     if (!createBookDto.title) {
       throw new BadRequestException('El título no puede estar vacío');
     }
     if (!createBookDto.author) {
       throw new BadRequestException('El autor no puede estar vacío');
     }
-    if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(createBookDto.year)) {
-      throw new BadRequestException('Formato invalido de fecha, utilice: "dd/mm/yyyy"');
+    if (!isValidDate(createBookDto.year)) {
+      throw new BadRequestException(
+        "Formato invalido de fecha, utilice: 'dd/mm/aaaa'",
+      );
     }
     return this.booksService.create(createBookDto);
   }
- 
   @Get()
   async findAll(): Promise<Book[]> {
     return this.booksService.findAll();
@@ -31,7 +43,7 @@ export class BooksController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateBookDto: any,
+    @Body() updateBookDto: UpdateBookRequest,
   ): Promise<Book> {
     await this.booksService.update(id, updateBookDto);
     const book = await this.booksService.findOne(id);
