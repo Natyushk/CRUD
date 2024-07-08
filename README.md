@@ -43,12 +43,8 @@ To run unit tests:
 ```bash
 $ npm run test
 ```
+![test](https://raw.githubusercontent.com/Natyushk/CRUD/main/assets/test.png)
 
-You can also use the command:
-
-```bash
-$ npm test -- --config=jest.config.js
-```
 
 ### End-to-End (e2e) Testing
 
@@ -57,6 +53,7 @@ To run e2e tests:
 ```bash
 $ npm run test:e2e
 ```
+![e2e](https://raw.githubusercontent.com/Natyushk/CRUD/main/assets/e2e.png)
 
 ### Code Coverage
 
@@ -65,12 +62,7 @@ To check code coverage:
 ```bash
 $ npm run test:cov
 ```
-
-You can also use the command:
-
-```bash
-$ npm test -- --config=jest.config.js --coverage
-```
+![cov](https://raw.githubusercontent.com/Natyushk/CRUD/main/assets/cov.png)
 
 ## Code Validations
 
@@ -104,4 +96,4 @@ It will be used as follows:
 |Delete a book by ID | DELETE /books/:id | String | Eliminado correctamente / El libro no existe
 
 ## API URL demo
-To Access use the following url https://library-api-red.vercel.app
+To Access use the following url: https://library-api-red.vercel.app
