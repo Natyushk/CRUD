@@ -1,73 +1,104 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Library API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is a RESTful API for library management, developed with TypeScript and NestJS.
 
 ## Installation
+
+To install the project dependencies, run:
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Running the Application
+
+You can run the application in different modes:
+
+### Development
 
 ```bash
-# development
 $ npm run start
+```
 
-# watch mode
+### Watch Mode
+
+```bash
 $ npm run start:dev
+```
 
-# production mode
+### Production
+
+```bash
 $ npm run start:prod
 ```
 
-## Test
+## Testing
+
+You can run unit tests, end-to-end (e2e) tests, and check code coverage with the following commands:
+
+### Unit Testing
+
+To run unit tests:
 
 ```bash
-# unit tests
 $ npm run test
+```
 
-# e2e tests
+You can also use the command:
+
+```bash
+$ npm test -- --config=jest.config.js
+```
+
+### End-to-End (e2e) Testing
+
+To run e2e tests:
+
+```bash
 $ npm run test:e2e
+```
 
-# test coverage
+### Code Coverage
+
+To check code coverage:
+
+```bash
 $ npm run test:cov
 ```
 
-## Support
+You can also use the command:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+$ npm test -- --config=jest.config.js --coverage
+```
 
-## Stay in touch
+## Code Validations
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+To ensure that your code complies with clean code rules using ESLint and Prettier, run:
 
-## License
+```bash
+$ npm run lint
+```
 
-Nest is [MIT licensed](LICENSE).
+To automatically fix problems detected by ESLint, run:
+
+```bash
+$ npm run lint:fix
+```
+
+## Login to local host
+
+To log in to the local host, you can enter using the following link:
+[local holst](http://localhost:3000/api)
+Here you will see the following page:
+![swagger](https://raw.githubusercontent.com/Natyushk/CRUD/main/assets/local%20host.png)
+
+## Endpoints
+It will be used as follows:
+
+| | Method/http | Type | Validations
+| ------ | ------ | ------ | ------ |
+| Create a book | POST /books | String | El título no puede estar vacío, El autor no puede estar vacío, Formato invalido de fecha, utilice: 'dd/mm/aaaa'
+| Get all books | GET /books | String |
+| Update a book by ID | PUT /books/:id | String| El libro no existe
+|Delete a book by ID | DELETE /books/:id | String | Eliminado correctamente / El libro no existe
