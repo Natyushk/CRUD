@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BooksController } from './books.controller';
 import { BooksService } from './books.service';
-
-const mockBook = {
-  title: 'Test Book',
-  author: 'Test Author',
-  year: '2020',
-  genre: 'Test Genre',
-};
+import { Book } from './book.schema';
+import { CreateBookRequest, UpdateBookRequest } from './books.type';
+import { BadRequestException } from '@nestjs/common';
+import { isValidDate } from '../utils/date';
+jest.mock('../utils/date', () => ({
+  isValidDate: jest.fn(),
+}));
 
 describe('BooksController', () => {
-  let controller: BooksController;
-  let service: BooksService;
+  let booksController: BooksController;
+  let booksService: BooksService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,88 +20,154 @@ describe('BooksController', () => {
         {
           provide: BooksService,
           useValue: {
-            create: jest.fn().mockResolvedValue(mockBook),
-            findAll: jest.fn().mockResolvedValue([mockBook]),
-            findOne: jest.fn().mockResolvedValue(mockBook),
-            update: jest.fn().mockResolvedValue(mockBook),
-            delete: jest.fn().mockResolvedValue(mockBook),
+            create: jest.fn(),
+            findAll: jest.fn(),
+            findOne: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
     }).compile();
 
-    controller = module.get<BooksController>(BooksController);
-    service = module.get<BooksService>(BooksService);
+    booksController = module.get<BooksController>(BooksController);
+    booksService = module.get<BooksService>(BooksService);
   });
 
-  it('should not create a book with empty title', async () => {
-    const newBook = {
-      ...mockBook,
-      title: '',
-    };
+  describe('create', () => {
+    it('should throw an error if title is missing', async () => {
+      const createBookDto: CreateBookRequest = {
+        title: '',
+        author: 'Author',
+        year: '01/01/2020',
+        genre: 'Genre',
+      };
+      await expect(booksController.create(createBookDto)).rejects.toThrow(
+        new BadRequestException('El título no puede estar vacío'),
+      );
+    });
 
-    try {
-      await controller.create(newBook);
-      fail('Expected to throw an error');
-    } catch (error) {
-      expect(error.message).toEqual('Title cannot be empty');
-    }
+    it('should throw an error if author is missing', async () => {
+      const createBookDto: CreateBookRequest = {
+        title: 'Title',
+        author: '',
+        year: '01/01/2020',
+        genre: 'Genre',
+      };
+      await expect(booksController.create(createBookDto)).rejects.toThrow(
+        new BadRequestException('El autor no puede estar vacío'),
+      );
+    });
+
+    it('should throw an error if date format is invalid', async () => {
+      const createBookDto: CreateBookRequest = {
+        title: 'Title',
+        author: 'Author',
+        year: 'invalid-date',
+        genre: 'Genre',
+      };
+      (isValidDate as jest.Mock).mockReturnValue(false);
+      await expect(booksController.create(createBookDto)).rejects.toThrow(
+        new BadRequestException(
+          "Formato invalido de fecha, utilice: 'dd/mm/aaaa'",
+        ),
+      );
+    });
+
+    it('should create a book', async () => {
+      const createBookDto: CreateBookRequest = {
+        title: 'Title',
+        author: 'Author',
+        year: '01/01/2020',
+        genre: 'Genre',
+      };
+      const book: Book = {
+        title: 'Title',
+        author: 'Author',
+        year: '01/01/2020',
+        genre: 'Genre',
+      };
+      (isValidDate as jest.Mock).mockReturnValue(true);
+      jest.spyOn(booksService, 'create').mockResolvedValue(book);
+
+      expect(await booksController.create(createBookDto)).toBe(book);
+    });
   });
 
-  it('should not create a book with empty author', async () => {
-    const newBook = {
-      ...mockBook,
-      author: '',
-    };
+  describe('findAll', () => {
+    it('should return an array of books', async () => {
+      const books: Book[] = [
+        {
+          title: 'Book 1',
+          author: 'Author 1',
+          year: '01/01/2020',
+          genre: 'Genre 1',
+        },
+        {
+          title: 'Book 2',
+          author: 'Author 2',
+          year: '01/01/2021',
+          genre: 'Genre 2',
+        },
+      ];
+      jest.spyOn(booksService, 'findAll').mockResolvedValue(books);
 
-    try {
-      await controller.create(newBook);
-      fail('Expected to throw an error');
-    } catch (error) {
-      expect(error.message).toEqual('Author cannot be empty');
-    }
+      expect(await booksController.findAll()).toBe(books);
+    });
   });
 
-  it('should not create a book with invalid year', async () => {
-    const newBook = {
-      ...mockBook,
-      year: 'invalid year',
-    };
+  describe('findOne', () => {
+    it('should return a book', async () => {
+      const book: Book = {
+        title: 'Book 1',
+        author: 'Author 1',
+        year: '01/01/2020',
+        genre: 'Genre 1',
+      };
+      jest.spyOn(booksService, 'findOne').mockResolvedValue(book);
 
-    try {
-      await controller.create(newBook);
-      fail('Expected to throw an error');
-    } catch (error) {
-      expect(error.message).toEqual('Invalid year format');
-    }
+      expect(await booksController.findOne('1')).toBe(book);
+    });
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('update', () => {
+    it('should update a book', async () => {
+      const updateBookDto: UpdateBookRequest = {
+        title: 'Updated Title',
+        author: 'Updated Author',
+        year: '01/01/2021',
+        genre: 'Updated Genre',
+      };
+      const book: Book = {
+        title: 'Updated Title',
+        author: 'Updated Author',
+        year: '01/01/2021',
+        genre: 'Updated Genre',
+      };
+      jest.spyOn(booksService, 'update').mockResolvedValue(book);
+      jest.spyOn(booksService, 'findOne').mockResolvedValue(book);
+
+      expect(await booksController.update('1', updateBookDto)).toBe(book);
+    });
   });
 
-  it('should create a new book', async () => {
-    const newBook = await controller.create(mockBook);
-    expect(newBook).toEqual(mockBook);
-  });
+  describe('delete', () => {
+    it('should delete a book', async () => {
+      const book: Book = {
+        title: 'Book 1',
+        author: 'Author 1',
+        year: '01/01/2020',
+        genre: 'Genre 1',
+      };
+      jest.spyOn(booksService, 'findOne').mockResolvedValue(book);
 
-  it('should return all books', async () => {
-    const books = await controller.findAll();
-    expect(books).toEqual([mockBook]);
-  });
+      expect(await booksController.delete('1')).toBe('Eliminado correctamente');
+    });
 
-  it('should return a book by ID', async () => {
-    const book = await controller.findOne('1');
-    expect(book).toEqual(mockBook);
-  });
+    it('should return an error message if book does not exist', async () => {
+      jest.spyOn(booksService, 'findOne').mockResolvedValue(null);
 
-  it('should update a book by ID', async () => {
-    const updatedBook = await controller.update('1', mockBook);
-    expect(updatedBook).toEqual(mockBook);
-  });
-
-  it('should delete a book by ID', async () => {
-    const deleteMessage = await controller.delete('1');
-    expect(deleteMessage).toEqual('Eliminado correctamente');
+      expect(await booksController.delete('1')).toBe('El libro no existe');
+    });
   });
 });
