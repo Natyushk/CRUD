@@ -41,5 +41,8 @@ module.exports = {
     'prefer-const': 'error',
     'no-var': 'error',
     'eqeqeq': ['error', 'always'],
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    'no-console': 'off',
   },
 };

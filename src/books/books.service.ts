@@ -4,14 +4,17 @@ import { Model } from 'mongoose';
 import { Book } from './book.schema';
 import { ObjectId } from 'mongodb';
 import { CreateBookRequest, UpdateBookRequest } from './books.type';
+import { BookDocument } from './book.schema';
 
 @Injectable()
 export class BooksService {
-  constructor(@InjectModel('Book') private readonly bookModel: Model<Book>) {}
+  constructor(
+    @InjectModel(Book.name) private readonly bookModel: Model<BookDocument>,
+  ) {}
 
   async create(bookDto: CreateBookRequest): Promise<Book> {
-    const createdBook = new this.bookModel(bookDto);
-    return createdBook.save();
+    const createdBook = await this.bookModel.create(bookDto);
+    return createdBook;
   }
   async findAll(): Promise<Book[]> {
     return this.bookModel.find().exec();
